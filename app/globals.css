@@ -103,7 +103,22 @@ input:disabled { opacity: 0.4; }
 
 .check { display: flex; align-items: center; gap: 10px; margin-top: -6px; cursor: pointer; }
 .check input { width: 18px; height: 18px; accent-color: var(--ouro); }
-.dica { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--suave); color: var(--suave); font-size: 0.65rem; font-style: normal; cursor: help; flex-shrink: 0; }
+
+.verao {
+  display: flex; align-items: flex-start; gap: 12px;
+  padding: 12px 14px;
+  background: var(--campo);
+  border: 1px solid var(--linha);
+  border-radius: 12px;
+  cursor: pointer;
+  animation: surge 0.2s ease;
+  transition: border-color 0.15s;
+}
+.verao:hover { border-color: var(--suave); }
+.verao input { width: 16px; height: 16px; accent-color: var(--ouro); flex-shrink: 0; margin-top: 3px; }
+.verao-texto { display: flex; flex-direction: column; gap: 3px; }
+.verao-nome { font-size: 0.875rem; font-weight: 500; color: var(--texto); }
+.verao-desc { font-size: 0.78rem; color: var(--suave); line-height: 1.4; }
 
 .cidade { position: relative; }
 .sugestoes {
@@ -171,6 +186,7 @@ button.secundario:hover { background: #d9b8711a; }
 .erro { color: var(--erro); font-weight: 500; }
 
 footer { max-width: 420px; text-align: center; font-size: 0.72rem; line-height: 1.5; color: var(--suave); }
+
 
 @media (max-width: 380px) {
   .linha { grid-template-columns: 1fr; }

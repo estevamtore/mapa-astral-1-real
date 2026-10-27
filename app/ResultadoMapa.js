@@ -1,5 +1,7 @@
 "use client";
 
+import { useState } from "react";
+
 // Glifos com ︎ para não virarem emoji no celular.
 const T = "︎";
 const GLIFO_SIGNO = ["♈", "♉", "♊", "♋", "♌", "♍", "♎", "♏", "♐", "♑", "♒", "♓"].map((g) => g + T);
@@ -149,6 +151,174 @@ function Secao({ glifo, titulo, tema, pos, casa, retrogrado, texto, textoCasa, t
   );
 }
 
+function rr(c, x, y, w, h, r) {
+  c.beginPath();
+  c.moveTo(x + r, y);
+  c.lineTo(x + w - r, y);
+  c.arcTo(x + w, y, x + w, y + r, r);
+  c.lineTo(x + w, y + h - r);
+  c.arcTo(x + w, y + h, x + w - r, y + h, r);
+  c.lineTo(x + r, y + h);
+  c.arcTo(x, y + h, x, y + h - r, r);
+  c.lineTo(x, y + r);
+  c.arcTo(x, y, x + r, y, r);
+  c.closePath();
+}
+
+async function gerarImagemMapa(mapa) {
+  const W = 1080, H = 1920;
+  const cv = document.createElement("canvas");
+  cv.width = W; cv.height = H;
+  const c = cv.getContext("2d");
+
+  const OURO = "#d9b871", OURO2 = "#e7c98a";
+  const TEXTO = "#ece6d8", SUAVE = "#a29fb8", LINHA = "#2c3358";
+  const CEU = "#0f1428", CEU2 = "#1a1f3d", CAMPO = "#10152b", CARD = "#171c36";
+  const SANS = 'Inter, system-ui, sans-serif';
+  const SERIF = '"Cormorant Garamond", Georgia, serif';
+
+  // Background
+  const bg = c.createLinearGradient(0, 0, 0, H);
+  bg.addColorStop(0, CEU2); bg.addColorStop(1, CEU);
+  c.fillStyle = bg; c.fillRect(0, 0, W, H);
+
+  // Stars
+  [[108,95],[860,60],[44,210],[1020,170],[310,88],[780,130],[55,760],[1025,610],[540,45],[200,980],[950,900]].forEach(([x,y]) => {
+    c.fillStyle = "rgba(255,255,255,0.55)"; c.beginPath(); c.arc(x,y,2.2,0,Math.PI*2); c.fill();
+  });
+
+  await document.fonts.ready;
+  c.textAlign = "center";
+
+  // Ornament
+  c.fillStyle = OURO; c.font = `500 52px ${SERIF}`;
+  c.fillText("✦", W/2, 130);
+
+  // Title
+  c.fillStyle = TEXTO; c.font = `600 96px ${SERIF}`;
+  c.fillText("Seu Mapa Astral", W/2, 248);
+
+  // Date · local
+  c.fillStyle = SUAVE; c.font = `400 34px ${SANS}`;
+  const dataLinha = `${dataBR(mapa.data)}${mapa.hora ? " · " + mapa.hora : ""} · ${mapa.local}`;
+  c.fillText(dataLinha, W/2, 310);
+
+  // Divider
+  c.strokeStyle = LINHA; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(80, 350); c.lineTo(W-80, 350); c.stroke();
+
+  // ——— Trio (Sol / Lua / Asc) ———
+  const sol = mapa.planetas.find((p) => p.chave === "sol");
+  const lua = mapa.planetas.find((p) => p.chave === "lua");
+  const trio = [
+    { label: "☉  Sol", val: sol.signo },
+    { label: "☽  Lua", val: lua.incerta ? "—" : lua.signo },
+    { label: "↑  Ascendente", val: mapa.ascendente ? mapa.ascendente.signo : "—" },
+  ];
+  const bW = (W - 100) / 3 - 10, bH = 220, bY = 380;
+  trio.forEach(({ label, val }, i) => {
+    const bX = 50 + i * ((W - 100) / 3);
+    c.fillStyle = CAMPO; rr(c, bX, bY, bW, bH, 22); c.fill();
+    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, bX, bY, bW, bH, 22); c.stroke();
+    const cx = bX + bW / 2;
+    c.fillStyle = SUAVE; c.font = `400 27px ${SANS}`;
+    c.fillText(label, cx, bY + 72);
+    c.fillStyle = OURO2; c.font = `600 58px ${SERIF}`;
+    c.fillText(val, cx, bY + 160);
+  });
+
+  // ——— Outros planetas ———
+  c.strokeStyle = LINHA; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(80, 640); c.lineTo(W-80, 640); c.stroke();
+
+  const pessoais = ["mercurio","venus","marte","jupiter","saturno"];
+  const glf = { mercurio:"☿", venus:"♀", marte:"♂", jupiter:"♃", saturno:"♄", urano:"♅", netuno:"♆", plutao:"♇" };
+  const planFiltro = mapa.planetas.filter(p => pessoais.includes(p.chave));
+
+  c.fillStyle = SUAVE; c.font = `500 28px ${SANS}`;
+  c.fillText("PLANETAS", W/2, 700);
+
+  const colunas = 2, larg = (W - 160) / colunas;
+  planFiltro.forEach((p, i) => {
+    const col = i % colunas, row = Math.floor(i / colunas);
+    const px = 80 + col * larg + larg / 2;
+    const py = 760 + row * 100;
+    c.fillStyle = CAMPO; rr(c, 80 + col * larg, py - 44, larg - 20, 80, 16); c.fill();
+    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, 80 + col * larg, py - 44, larg - 20, 80, 16); c.stroke();
+    c.fillStyle = SUAVE; c.font = `400 24px ${SANS}`;
+    c.fillText(`${glf[p.chave]}  ${p.nome}`, px - 10, py - 12);
+    c.fillStyle = OURO; c.font = `600 36px ${SERIF}`;
+    c.fillText(p.signo, px - 10, py + 26);
+  });
+
+  // ——— MC ———
+  if (mapa.meioDoCeu) {
+    const mcY = 760 + Math.ceil(planFiltro.length / 2) * 100 + 20;
+    c.fillStyle = CAMPO; rr(c, 80, mcY, W - 160, 80, 16); c.fill();
+    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, 80, mcY, W - 160, 80, 16); c.stroke();
+    c.fillStyle = SUAVE; c.font = `400 24px ${SANS}`;
+    c.fillText("MC  Meio do Céu", W/2, mcY + 26);
+    c.fillStyle = OURO; c.font = `600 36px ${SERIF}`;
+    c.fillText(mapa.meioDoCeu.signo, W/2, mcY + 62);
+  }
+
+  // ——— Equilíbrio ———
+  const eqY = H - 340;
+  c.strokeStyle = LINHA; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(80, eqY); c.lineTo(W-80, eqY); c.stroke();
+
+  const doms = mapa.equilibrio.elemento.nome;
+  const mods = mapa.equilibrio.modalidade.nome;
+  c.fillStyle = SUAVE; c.font = `400 30px ${SANS}`;
+  c.fillText(`Elemento · ${doms}     Modalidade · ${mods}`, W/2, eqY + 60);
+
+  // ——— Footer ———
+  c.strokeStyle = LINHA; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(80, H - 200); c.lineTo(W-80, H - 200); c.stroke();
+  c.fillStyle = OURO; c.font = `500 32px ${SANS}`;
+  c.fillText("mapa-astral-1-real.vercel.app", W/2, H - 140);
+  c.fillStyle = SUAVE; c.font = `400 26px ${SANS}`;
+  c.fillText("Posições pelo zodíaco tropical · Astronomy Engine", W/2, H - 90);
+
+  return new Promise((res) => cv.toBlob(res, "image/png"));
+}
+
+function BotaoCompartilhar({ mapa }) {
+  const [gerando, setGerando] = useState(false);
+
+  async function compartilhar() {
+    setGerando(true);
+    try {
+      const blob = await gerarImagemMapa(mapa);
+      const file = new File([blob], "meu-mapa-astral.png", { type: "image/png" });
+      // Mobile: Web Share API com arquivo
+      if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ files: [file], title: "Meu Mapa Astral" });
+      } else {
+        // Desktop / fallback: abre a imagem em nova aba para salvar/compartilhar
+        const url = URL.createObjectURL(blob);
+        const w = window.open(url, "_blank");
+        if (!w) {
+          // Bloqueado pelo popup blocker: faz download direto
+          const a = document.createElement("a");
+          a.href = url; a.download = "meu-mapa-astral.png";
+          document.body.appendChild(a); a.click(); document.body.removeChild(a);
+        }
+        setTimeout(() => URL.revokeObjectURL(url), 10000);
+      }
+    } catch (e) {
+      console.error("compartilhar error:", e);
+    }
+    setGerando(false);
+  }
+
+  return (
+    <button onClick={compartilhar} disabled={gerando}>
+      {gerando ? "Gerando imagem…" : "Compartilhar resultado"}
+    </button>
+  );
+}
+
 export default function ResultadoMapa({ mapa, onNovo }) {
   const sol = mapa.planetas.find((p) => p.chave === "sol");
   const lua = mapa.planetas.find((p) => p.chave === "lua");
@@ -227,6 +397,7 @@ export default function ResultadoMapa({ mapa, onNovo }) {
         </section>
       )}
 
+      <BotaoCompartilhar mapa={mapa} />
       <button className="secundario" onClick={onNovo}>Fazer outro mapa</button>
     </div>
   );

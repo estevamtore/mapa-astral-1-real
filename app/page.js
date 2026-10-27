@@ -99,27 +99,27 @@ export default function Home() {
   const timer = useRef(null);
 
   function ajustarDST(horaStr, dataISO) {
-    const [h, m] = horaStr.split(“:”).map(Number);
+    const [h, m] = horaStr.split(":").map(Number);
     const totalMin = h * 60 + m + 60;
     if (totalMin < 24 * 60) {
-      const hh = String(Math.floor(totalMin / 60)).padStart(2, “0”);
-      const mm = String(totalMin % 60).padStart(2, “0”);
+      const hh = String(Math.floor(totalMin / 60)).padStart(2, "0");
+      const mm = String(totalMin % 60).padStart(2, "0");
       return { hora: `${hh}:${mm}`, data: dataISO };
     }
-    const d = new Date(dataISO + “T00:00:00Z”);
+    const d = new Date(dataISO + "T00:00:00Z");
     d.setUTCDate(d.getUTCDate() + 1);
-    const hh = String(Math.floor((totalMin - 1440) / 60)).padStart(2, “0”);
-    const mm = String((totalMin - 1440) % 60).padStart(2, “0”);
+    const hh = String(Math.floor((totalMin - 1440) / 60)).padStart(2, "0");
+    const mm = String((totalMin - 1440) % 60).padStart(2, "0");
     return { hora: `${hh}:${mm}`, data: d.toISOString().slice(0, 10) };
   }
 
   async function comprar(e) {
     e.preventDefault();
-    if (!data) return setErro(“Informe sua data de nascimento.”);
-    if (!semHora && !hora) return setErro(“Informe a hora ou marque “Não sei a hora”.”);
-    if (!cidade) return setErro(“Escolha a cidade de nascimento na lista.”);
-    setErro(“”);
-    setEtapa(“gerando”);
+    if (!data) return setErro("Informe sua data de nascimento.");
+    if (!semHora && !hora) return setErro('Informe a hora ou marque "Não sei a hora".');
+    if (!cidade) return setErro("Escolha a cidade de nascimento na lista.");
+    setErro("");
+    setEtapa("gerando");
     let horaEnvio = semHora ? null : hora;
     let dataEnvio = data;
     if (!semHora && hora && horaDeVerao) {
@@ -127,9 +127,9 @@ export default function Home() {
       horaEnvio = adj.hora;
       dataEnvio = adj.data;
     }
-    const res = await fetch(“/api/pagamento”, {
-      method: “POST”,
-      headers: { “Content-Type”: “application/json” },
+    const res = await fetch("/api/pagamento", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ data: dataEnvio, hora: horaEnvio, ibge: cidade.ibge }),
     });
     const r = await res.json();
@@ -206,11 +206,13 @@ export default function Home() {
             </label>
 
             {!semHora && hora && (
-              <label className="check">
+              <label className="verao">
                 <input id="hora-verao" type="checkbox" checked={horaDeVerao}
                   onChange={(e) => setHoraDeVerao(e.target.checked)} />
-                Horário de verão
-                <span className="dica" title="Marque se o horário no registro está em hora padrão e o nascimento ocorreu durante o horário de verão (o cálculo adiantará 1h automaticamente).">?</span>
+                <span className="verao-texto">
+                  <span className="verao-nome">Horário de verão</span>
+                  <span className="verao-desc">O horário no registro está em hora padrão, mas nasci durante o horário de verão</span>
+                </span>
               </label>
             )}
 
