@@ -90,6 +90,7 @@ export default function Home() {
   const [data, setData] = useState("");
   const [hora, setHora] = useState("");
   const [semHora, setSemHora] = useState(false);
+  const [horaDeVerao, setHoraDeVerao] = useState(false);
   const [cidade, setCidade] = useState(null);
   const [pix, setPix] = useState(null);
   const [mapa, setMapa] = useState(null);
@@ -97,17 +98,39 @@ export default function Home() {
   const [copiado, setCopiado] = useState(false);
   const timer = useRef(null);
 
+  function ajustarDST(horaStr, dataISO) {
+    const [h, m] = horaStr.split(“:”).map(Number);
+    const totalMin = h * 60 + m + 60;
+    if (totalMin < 24 * 60) {
+      const hh = String(Math.floor(totalMin / 60)).padStart(2, “0”);
+      const mm = String(totalMin % 60).padStart(2, “0”);
+      return { hora: `${hh}:${mm}`, data: dataISO };
+    }
+    const d = new Date(dataISO + “T00:00:00Z”);
+    d.setUTCDate(d.getUTCDate() + 1);
+    const hh = String(Math.floor((totalMin - 1440) / 60)).padStart(2, “0”);
+    const mm = String((totalMin - 1440) % 60).padStart(2, “0”);
+    return { hora: `${hh}:${mm}`, data: d.toISOString().slice(0, 10) };
+  }
+
   async function comprar(e) {
     e.preventDefault();
-    if (!data) return setErro("Informe sua data de nascimento.");
-    if (!semHora && !hora) return setErro("Informe a hora ou marque “Não sei a hora”.");
-    if (!cidade) return setErro("Escolha a cidade de nascimento na lista.");
-    setErro("");
-    setEtapa("gerando");
-    const res = await fetch("/api/pagamento", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ data, hora: semHora ? null : hora, ibge: cidade.ibge }),
+    if (!data) return setErro(“Informe sua data de nascimento.”);
+    if (!semHora && !hora) return setErro(“Informe a hora ou marque “Não sei a hora”.”);
+    if (!cidade) return setErro(“Escolha a cidade de nascimento na lista.”);
+    setErro(“”);
+    setEtapa(“gerando”);
+    let horaEnvio = semHora ? null : hora;
+    let dataEnvio = data;
+    if (!semHora && hora && horaDeVerao) {
+      const adj = ajustarDST(hora, data);
+      horaEnvio = adj.hora;
+      dataEnvio = adj.data;
+    }
+    const res = await fetch(“/api/pagamento”, {
+      method: “POST”,
+      headers: { “Content-Type”: “application/json” },
+      body: JSON.stringify({ data: dataEnvio, hora: horaEnvio, ibge: cidade.ibge }),
     });
     const r = await res.json();
     if (!res.ok) {
@@ -178,9 +201,18 @@ export default function Home() {
 
             <label className="check">
               <input id="sem-hora" type="checkbox" checked={semHora}
-                onChange={(e) => setSemHora(e.target.checked)} />
+                onChange={(e) => { setSemHora(e.target.checked); if (e.target.checked) setHoraDeVerao(false); }} />
               Não sei a hora (sem Ascendente e casas)
             </label>
+
+            {!semHora && hora && (
+              <label className="check">
+                <input id="hora-verao" type="checkbox" checked={horaDeVerao}
+                  onChange={(e) => setHoraDeVerao(e.target.checked)} />
+                Horário de verão
+                <span className="dica" title="Marque se o horário no registro está em hora padrão e o nascimento ocorreu durante o horário de verão (o cálculo adiantará 1h automaticamente).">?</span>
+              </label>
+            )}
 
             <div className="campo">
               <label htmlFor="cidade">Cidade de nascimento</label>

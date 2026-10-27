@@ -103,6 +103,7 @@ input:disabled { opacity: 0.4; }
 
 .check { display: flex; align-items: center; gap: 10px; margin-top: -6px; cursor: pointer; }
 .check input { width: 18px; height: 18px; accent-color: var(--ouro); }
+.dica { display: inline-flex; align-items: center; justify-content: center; width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--suave); color: var(--suave); font-size: 0.65rem; font-style: normal; cursor: help; flex-shrink: 0; }
 
 .cidade { position: relative; }
 .sugestoes {
