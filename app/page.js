@@ -180,7 +180,7 @@ export default function Home() {
       <div className={`card ${etapa === "mapa" ? "largo" : ""}`}>
         {(etapa === "inicio" || etapa === "gerando") && (
           <form onSubmit={comprar} noValidate>
-            <p className="ornamento" aria-hidden="true">☉ ☽ ↑</p>
+            <p className="ornamento" aria-hidden="true">☽</p>
             <h1>Seu mapa astral</h1>
             <p className="sub">
               Por um valor simbólico de <strong>R$&nbsp;1,00</strong>, receba seu mapa astral completo: os 10 planetas, Ascendente, Meio do Céu e as 12 casas.
