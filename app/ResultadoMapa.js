@@ -212,10 +212,6 @@ async function gerarImagemMapa(mapa) {
 
   // ── Glifo do signo solar — grande, central (fonte de símbolos para evitar emoji) ──
   const solGlifo = solIdx >= 0 ? GLIFO_SIGNO_CANVAS[solIdx] : "✦";
-  c.fillStyle = OURO2; c.font = `normal 380px ${SYMBOL}`;
-  c.globalAlpha = 0.12;
-  c.fillText(solGlifo, W/2, 560);
-  c.globalAlpha = 1;
   c.fillStyle = OURO2; c.font = `normal 200px ${SYMBOL}`;
   c.fillText(solGlifo, W/2, 510);
 
