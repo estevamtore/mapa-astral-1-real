@@ -1,4 +1,5 @@
 import "./globals.css";
+import StarField from "./StarField";
 
 export const metadata = {
   title: "Seu mapa astral por R$1",
@@ -15,7 +16,10 @@ export default function RootLayout({ children }) {
           rel="stylesheet"
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <StarField />
+        <div style={{ position: "relative", zIndex: 1 }}>{children}</div>
+      </body>
     </html>
   );
 }
