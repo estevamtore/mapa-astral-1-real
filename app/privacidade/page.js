@@ -1,5 +1,5 @@
 export const metadata = {
-  title: "Termos e Privacidade — Mapa Astral",
+  title: "Termos e Privacidade — Dona Lua",
 };
 
 export default function Privacidade() {

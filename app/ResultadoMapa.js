@@ -285,7 +285,7 @@ async function gerarImagemMapa(mapa) {
   const dataLinha = `${dataBR(mapa.data)}${mapa.hora ? " · " + mapa.hora : ""} · ${mapa.local}`;
   c.fillText(dataLinha, W/2, 1192);
   c.fillStyle = OURO; c.font = `500 28px ${SANS}`;
-  c.fillText("mapa-astral-1-real.vercel.app", W/2, 1272);
+  c.fillText("adonalua.com", W/2, 1272);
 
   return new Promise((res) => cv.toBlob(res, "image/png"));
 }
@@ -297,10 +297,10 @@ function BotaoCompartilhar({ mapa }) {
     setGerando(true);
     try {
       const blob = await gerarImagemMapa(mapa);
-      const file = new File([blob], "meu-mapa-astral.png", { type: "image/png" });
+      const file = new File([blob], "dona-lua-mapa.png", { type: "image/png" });
       // Mobile: Web Share API com arquivo
       if (navigator.share && navigator.canShare && navigator.canShare({ files: [file] })) {
-        await navigator.share({ files: [file], title: "Meu Mapa Astral" });
+        await navigator.share({ files: [file], title: "Meu Mapa — Dona Lua" });
       } else {
         // Desktop / fallback: abre a imagem em nova aba para salvar/compartilhar
         const url = URL.createObjectURL(blob);
@@ -308,7 +308,7 @@ function BotaoCompartilhar({ mapa }) {
         if (!w) {
           // Bloqueado pelo popup blocker: faz download direto
           const a = document.createElement("a");
-          a.href = url; a.download = "meu-mapa-astral.png";
+          a.href = url; a.download = "dona-lua-mapa.png";
           document.body.appendChild(a); a.click(); document.body.removeChild(a);
         }
         setTimeout(() => URL.revokeObjectURL(url), 10000);
@@ -342,7 +342,7 @@ export default function ResultadoMapa({ mapa, onNovo }) {
     <div className="resultado">
       <header className="res-topo">
         <p className="ornamento" aria-hidden="true">✦</p>
-        <h1 className="menor">Seu mapa astral</h1>
+        <h1 className="menor">Seu mapa — Dona Lua</h1>
         <p className="dados">{dataBR(mapa.data)}{mapa.hora && ` · ${mapa.hora}`} · {mapa.local}</p>
       </header>
 
