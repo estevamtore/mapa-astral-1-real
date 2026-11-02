@@ -186,7 +186,7 @@ export default function Home() {
         {(etapa === "inicio" || etapa === "gerando") && (
           <form onSubmit={comprar} noValidate>
             <p className="ornamento" aria-hidden="true">☽</p>
-            <h1>Dona Lua</h1>
+            <h1>Seu mapa astral</h1>
             <p className="sub">
               Por apenas <strong>R$&nbsp;4,99</strong>, receba seu mapa astral completo: os 10 planetas, Ascendente, Meio do Céu e as 12 casas.
             </p>
