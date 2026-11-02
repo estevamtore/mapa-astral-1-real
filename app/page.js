@@ -169,6 +169,11 @@ export default function Home() {
   }
 
   function denovo() {
+    setData("");
+    setHora("");
+    setSemHora(false);
+    setHoraDeVerao(false);
+    setCidade(null);
     setPix(null);
     setMapa(null);
     setErro("");
@@ -190,12 +195,12 @@ export default function Home() {
               <div className="campo">
                 <label htmlFor="data">Data de nascimento</label>
                 <input id="data" type="date" min="1900-01-01" max={hoje()} value={data}
-                  onChange={(e) => setData(e.target.value)} />
+                  autoComplete="off" onChange={(e) => setData(e.target.value)} />
               </div>
               <div className="campo">
                 <label htmlFor="hora">Hora</label>
                 <input id="hora" type="time" value={hora} disabled={semHora}
-                  onChange={(e) => setHora(e.target.value)} />
+                  autoComplete="off" onChange={(e) => setHora(e.target.value)} />
               </div>
             </div>
 
