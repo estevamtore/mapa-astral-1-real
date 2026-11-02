@@ -101,10 +101,18 @@ input[type="date"], input[type="time"], input[type="text"] {
   background: var(--campo);
   border: 1px solid var(--linha);
   border-radius: 12px;
+  /* Necessário para width:100% funcionar no iOS */
+  appearance: none;
+  -webkit-appearance: none;
 }
-/* No iOS o texto de data/hora nativo fica na cor certa e alinhado à esquerda */
+/* Texto de data/hora nativo no iOS — cor e alinhamento corretos */
 input[type="date"]::-webkit-date-and-time-value,
-input[type="time"]::-webkit-date-and-time-value { color: var(--texto); text-align: left; }
+input[type="time"]::-webkit-date-and-time-value {
+  color: var(--texto);
+  text-align: left;
+  min-height: 24px;
+  line-height: 24px;
+}
 input:focus { outline: 2px solid var(--ouro); outline-offset: 1px; border-color: transparent; }
 input:disabled { opacity: 0.4; }
 
