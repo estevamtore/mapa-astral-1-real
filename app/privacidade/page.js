@@ -51,7 +51,9 @@ export default function Privacidade() {
           <h2>Finalidade e entretenimento</h2>
           <p>
             O mapa astral gerado é calculado com base no zodíaco tropical e na biblioteca
-            Astronomy Engine, de código aberto. O conteúdo é fornecido para fins de
+            Astronomy Engine, de código aberto. As interpretações foram elaboradas com
+            inspiração na obra <em>O Significado da Astrologia</em>, de Elizabeth Teissier,
+            como referência simbólica e psicológica. O conteúdo é fornecido para fins de
             entretenimento e autoconhecimento. Não constitui aconselhamento profissional
             de qualquer natureza.
           </p>
