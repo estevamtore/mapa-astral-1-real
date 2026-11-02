@@ -49,6 +49,7 @@ main {
   padding-block: 32px;
   padding-left: max(16px, env(safe-area-inset-left, 0px));
   padding-right: max(16px, env(safe-area-inset-right, 0px));
+  overflow-x: hidden;
 }
 
 .card {
@@ -67,6 +68,8 @@ main {
   color: var(--ouro);
   letter-spacing: 0.5em;
   margin-bottom: 14px;
+  font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "Symbola", serif;
+  font-variant-emoji: text;
 }
 
 h1 {
@@ -188,9 +191,20 @@ button.secundario:hover { background: #d9b8711a; }
 footer { max-width: 420px; text-align: center; font-size: 0.72rem; line-height: 1.5; color: var(--suave); }
 
 
-@media (max-width: 380px) {
+/* Em telas de telefone os campos de data e hora empilham verticalmente */
+@media (max-width: 480px) {
   .linha { grid-template-columns: 1fr; }
 }
+
+@media (max-width: 420px) {
+  /* Trio de signos: fonte menor para nomes longos como "Escorpião" */
+  .trio strong { font-size: clamp(0.9rem, 3.8vw, 1.1rem); }
+  /* Barras de equilíbrio: coluna de nome um pouco mais larga */
+  .barra { grid-template-columns: 60px 1fr 18px; font-size: 0.8rem; }
+  /* Tabela de casas: área da vida pode comprimir */
+  .tabela-casas table { font-size: 0.8rem; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { animation: none !important; transition: none !important; }
 }
