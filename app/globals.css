@@ -263,7 +263,7 @@ footer { max-width: 420px; text-align: center; font-size: 0.72rem; line-height: 
 .tabela-casas td { padding: 8px; border-bottom: 1px solid #2c335866; vertical-align: top; }
 .tabela-casas td.num { color: var(--ouro); font-weight: 600; font-variant-numeric: tabular-nums; }
 .tabela-casas td:nth-child(3) { color: var(--suave); }
-.glifo-tab { color: var(--ouro); font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", serif; }
+.glifo-tab { color: var(--ouro); font-family: "Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "Symbola", serif; font-variant-emoji: text; }
 
 @media (max-width: 420px) {
   .card { padding: 26px 16px 20px; }
