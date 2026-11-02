@@ -201,6 +201,55 @@ button.secundario:hover { background: #d9b8711a; }
 .erro { color: var(--erro); font-weight: 500; }
 
 footer { max-width: 420px; text-align: center; font-size: 0.72rem; line-height: 1.5; color: var(--suave); }
+footer a { color: var(--suave); text-decoration: underline; text-underline-offset: 3px; }
+footer a:hover { color: var(--ouro); }
+
+/* ——— Página de termos ——— */
+.privacidade-page {
+  min-height: 100vh;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 48px 16px;
+}
+.privacidade-card {
+  width: 100%;
+  max-width: 680px;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+}
+.privacidade-card h1 {
+  text-align: center;
+  margin-bottom: 0;
+}
+.privacidade-card .ornamento {
+  margin-bottom: 0;
+  font-size: 1.4rem;
+}
+.privacidade-card section {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--linha);
+}
+.privacidade-card section:last-of-type {
+  border-bottom: none;
+}
+.privacidade-card h2 {
+  font-family: var(--serif);
+  font-size: 1.3rem;
+  font-weight: 600;
+  color: var(--ouro-forte);
+}
+.privacidade-card p {
+  color: var(--suave);
+  line-height: 1.7;
+  font-size: 0.95rem;
+}
+.privacidade-card a { color: var(--ouro); }
+.privacidade-voltar { text-align: center; margin-top: 8px; }
 
 
 /* Em telas de telefone os campos de data e hora empilham verticalmente */

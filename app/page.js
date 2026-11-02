@@ -261,7 +261,9 @@ export default function Home() {
         )}
       </div>
 
-      <footer>Posições calculadas com a Astronomy Engine, no zodíaco tropical. Conteúdo para entretenimento.</footer>
+      <footer>
+        <a href="/privacidade" target="_blank" rel="noopener noreferrer">Termos e privacidade</a>
+      </footer>
     </main>
   );
 }
