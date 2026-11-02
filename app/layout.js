@@ -2,7 +2,7 @@ import "./globals.css";
 import StarField from "./StarField";
 
 export const metadata = {
-  title: "Dona Lua — Seu mapa astral por R$4,99",
+  title: "Dona Lua — Seu mapa astral",
   description: "Descubra seu Sol, sua Lua e seu Ascendente com a Dona Lua. Por apenas R$4,99 no Pix.",
 };
 
