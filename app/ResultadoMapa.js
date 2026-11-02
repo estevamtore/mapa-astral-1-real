@@ -165,8 +165,8 @@ function rr(c, x, y, w, h, r) {
   c.closePath();
 }
 
-// Glifo unicode do signo (índice 0=Áries…11=Peixes), sem sufixo emoji
-const GLIFO_SIGNO_CANVAS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+// Glifo unicode do signo com seletor U+FE0E para forçar apresentação de texto (não emoji)
+const GLIFO_SIGNO_CANVAS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"].map(g => g + "︎");
 const SIGNO_IDX = ["Áries","Touro","Gêmeos","Câncer","Leão","Virgem","Libra","Escorpião","Sagitário","Capricórnio","Aquário","Peixes"];
 
 async function gerarImagemMapa(mapa) {
@@ -183,6 +183,8 @@ async function gerarImagemMapa(mapa) {
   const BORDA = "rgba(255,255,255,0.10)";
   const SANS = 'Inter, system-ui, sans-serif';
   const SERIF = '"Cormorant Garamond", Georgia, serif';
+  // Fontes de símbolos para glifos zodiacais (mesmas usadas no site, evita emoji)
+  const SYMBOL = '"Segoe UI Symbol", "Apple Symbols", "Noto Sans Symbols 2", "Symbola", Georgia, serif';
 
   // ── Background gradient ──
   const bg = c.createLinearGradient(0, 0, W * 0.6, H);
@@ -208,13 +210,13 @@ async function gerarImagemMapa(mapa) {
   await document.fonts.ready;
   c.textAlign = "center";
 
-  // ── Glifo do signo solar — grande, central ──
+  // ── Glifo do signo solar — grande, central (fonte de símbolos para evitar emoji) ──
   const solGlifo = solIdx >= 0 ? GLIFO_SIGNO_CANVAS[solIdx] : "✦";
-  c.fillStyle = OURO2; c.font = `normal 380px ${SERIF}`;
+  c.fillStyle = OURO2; c.font = `normal 380px ${SYMBOL}`;
   c.globalAlpha = 0.12;
   c.fillText(solGlifo, W/2, 560);
   c.globalAlpha = 1;
-  c.fillStyle = OURO2; c.font = `normal 200px ${SERIF}`;
+  c.fillStyle = OURO2; c.font = `normal 200px ${SYMBOL}`;
   c.fillText(solGlifo, W/2, 510);
 
   // ── Linha fina ornamental ──
