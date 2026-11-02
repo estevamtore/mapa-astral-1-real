@@ -34,7 +34,7 @@ export default function Privacidade() {
             O pagamento via Pix é processado pelo Mercado Pago. Não temos acesso aos seus
             dados bancários ou de pagamento — eles são tratados diretamente pela plataforma
             do Mercado Pago, sujeita à própria política de privacidade. O valor cobrado
-            (R$&nbsp;1,00) é simbólico e não vinculado a nenhum cadastro.
+            (R$&nbsp;4,99) não está vinculado a nenhum cadastro.
           </p>
         </section>
 
