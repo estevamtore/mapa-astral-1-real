@@ -57,14 +57,6 @@ export default function Privacidade() {
           </p>
         </section>
 
-        <section>
-          <h2>Contato</h2>
-          <p>
-            Dúvidas sobre privacidade podem ser enviadas para{" "}
-            <a href="mailto:estevamtor@gmail.com">estevamtor@gmail.com</a>.
-          </p>
-        </section>
-
         <p className="privacidade-voltar">
           <a href="/">← Voltar ao site</a>
         </p>
