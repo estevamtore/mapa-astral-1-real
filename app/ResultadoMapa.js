@@ -165,120 +165,129 @@ function rr(c, x, y, w, h, r) {
   c.closePath();
 }
 
+// Glifo unicode do signo (índice 0=Áries…11=Peixes), sem sufixo emoji
+const GLIFO_SIGNO_CANVAS = ["♈","♉","♊","♋","♌","♍","♎","♏","♐","♑","♒","♓"];
+const SIGNO_IDX = ["Áries","Touro","Gêmeos","Câncer","Leão","Virgem","Libra","Escorpião","Sagitário","Capricórnio","Aquário","Peixes"];
+
 async function gerarImagemMapa(mapa) {
-  const W = 1080, H = 1920;
+  // Card compacto estilo Spotify — 1080×1350 (4:5, ideal para Stories/Instagram)
+  const W = 1080, H = 1350;
   const cv = document.createElement("canvas");
   cv.width = W; cv.height = H;
   const c = cv.getContext("2d");
 
-  const OURO = "#d9b871", OURO2 = "#e7c98a";
-  const TEXTO = "#ece6d8", SUAVE = "#a29fb8", LINHA = "#2c3358";
-  const CEU = "#0f1428", CEU2 = "#1a1f3d", CAMPO = "#10152b", CARD = "#171c36";
+  const OURO = "#d9b871", OURO2 = "#e8ca8a";
+  const TEXTO = "#ece6d8", SUAVE = "#9a96b4";
+  const CEU = "#080d1f", CEU2 = "#141933";
+  const CARD = "rgba(255,255,255,0.06)";
+  const BORDA = "rgba(255,255,255,0.10)";
   const SANS = 'Inter, system-ui, sans-serif';
   const SERIF = '"Cormorant Garamond", Georgia, serif';
 
-  // Background
-  const bg = c.createLinearGradient(0, 0, 0, H);
-  bg.addColorStop(0, CEU2); bg.addColorStop(1, CEU);
+  // ── Background gradient ──
+  const bg = c.createLinearGradient(0, 0, W * 0.6, H);
+  bg.addColorStop(0, "#131830"); bg.addColorStop(0.5, CEU2); bg.addColorStop(1, CEU);
   c.fillStyle = bg; c.fillRect(0, 0, W, H);
 
-  // Stars
-  [[108,95],[860,60],[44,210],[1020,170],[310,88],[780,130],[55,760],[1025,610],[540,45],[200,980],[950,900]].forEach(([x,y]) => {
-    c.fillStyle = "rgba(255,255,255,0.55)"; c.beginPath(); c.arc(x,y,2.2,0,Math.PI*2); c.fill();
+  // ── Glow atrás do glifo central ──
+  const sol = mapa.planetas.find((p) => p.chave === "sol");
+  const lua = mapa.planetas.find((p) => p.chave === "lua");
+  const solIdx = SIGNO_IDX.indexOf(sol.signo);
+  const glowGrad = c.createRadialGradient(W/2, 430, 0, W/2, 430, 320);
+  glowGrad.addColorStop(0, "rgba(217,184,113,0.18)");
+  glowGrad.addColorStop(0.5, "rgba(217,184,113,0.07)");
+  glowGrad.addColorStop(1, "rgba(217,184,113,0)");
+  c.fillStyle = glowGrad; c.fillRect(0, 0, W, 860);
+
+  // ── Estrelas ──
+  [[88,70],[920,55],[40,195],[1040,150],[295,75],[810,105],[60,700],[1030,580],[530,38],[195,820],[940,760],[420,160],[700,90],[150,450],[970,370]].forEach(([x,y]) => {
+    const r = Math.random() * 1.4 + 0.8;
+    c.fillStyle = `rgba(255,255,255,${0.3 + Math.random()*0.4})`; c.beginPath(); c.arc(x,y,r,0,Math.PI*2); c.fill();
   });
 
   await document.fonts.ready;
   c.textAlign = "center";
 
-  // Ornament
+  // ── Glifo do signo solar — grande, central ──
+  const solGlifo = solIdx >= 0 ? GLIFO_SIGNO_CANVAS[solIdx] : "✦";
+  c.fillStyle = OURO2; c.font = `normal 380px ${SERIF}`;
+  c.globalAlpha = 0.12;
+  c.fillText(solGlifo, W/2, 560);
+  c.globalAlpha = 1;
+  c.fillStyle = OURO2; c.font = `normal 200px ${SERIF}`;
+  c.fillText(solGlifo, W/2, 510);
+
+  // ── Linha fina ornamental ──
+  c.strokeStyle = "rgba(217,184,113,0.3)"; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(W/2-180,555); c.lineTo(W/2+180,555); c.stroke();
+
+  // ── Sol: "☉ Sol em Leão" ──
+  c.fillStyle = SUAVE; c.font = `400 30px ${SANS}`;
+  c.letterSpacing = "3px";
+  c.fillText("☉  SOL", W/2, 608);
+  c.letterSpacing = "0px";
+  c.fillStyle = TEXTO; c.font = `500 72px ${SERIF}`;
+  c.fillText(`em ${sol.signo}`, W/2, 690);
+
+  // ── Divisor fino ──
+  c.strokeStyle = "rgba(255,255,255,0.08)"; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(100,730); c.lineTo(W-100,730); c.stroke();
+
+  // ── Lua e Ascendente — lado a lado ──
+  const luaSigno = lua.incerta ? "—" : lua.signo;
+  const ascSigno = mapa.ascendente ? mapa.ascendente.signo : "—";
+  const metW = (W - 120) / 2;
+
+  // Card Lua
+  c.fillStyle = CARD; rr(c, 60, 760, metW, 170, 20); c.fill();
+  c.strokeStyle = BORDA; c.lineWidth = 1; rr(c, 60, 760, metW, 170, 20); c.stroke();
+  c.fillStyle = SUAVE; c.font = `400 26px ${SANS}`;
+  c.fillText("☽  LUA", 60 + metW/2, 810);
   c.fillStyle = OURO; c.font = `500 52px ${SERIF}`;
-  c.fillText("✦", W/2, 130);
+  c.fillText(luaSigno, 60 + metW/2, 876);
 
-  // Title
-  c.fillStyle = TEXTO; c.font = `600 96px ${SERIF}`;
-  c.fillText("Seu Mapa Astral", W/2, 248);
+  // Card Ascendente
+  const ax = 60 + metW + 20;
+  c.fillStyle = CARD; rr(c, ax, 760, metW, 170, 20); c.fill();
+  c.strokeStyle = BORDA; c.lineWidth = 1; rr(c, ax, 760, metW, 170, 20); c.stroke();
+  c.fillStyle = SUAVE; c.font = `400 26px ${SANS}`;
+  c.fillText("↑  ASCENDENTE", ax + metW/2, 810);
+  c.fillStyle = OURO; c.font = `500 52px ${SERIF}`;
+  c.fillText(ascSigno, ax + metW/2, 876);
 
-  // Date · local
-  c.fillStyle = SUAVE; c.font = `400 34px ${SANS}`;
-  const dataLinha = `${dataBR(mapa.data)}${mapa.hora ? " · " + mapa.hora : ""} · ${mapa.local}`;
-  c.fillText(dataLinha, W/2, 310);
+  // ── Planetas pessoais — linha compacta ──
+  const glf = { mercurio:"☿", venus:"♀", marte:"♂", jupiter:"♃", saturno:"♄" };
+  const pessoaisKeys = ["mercurio","venus","marte","jupiter","saturno"];
+  const planRow = mapa.planetas.filter(p => pessoaisKeys.includes(p.chave));
 
-  // Divider
-  c.strokeStyle = LINHA; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(80, 350); c.lineTo(W-80, 350); c.stroke();
+  c.fillStyle = CARD; rr(c, 60, 968, W-120, 80, 16); c.fill();
+  c.strokeStyle = BORDA; c.lineWidth = 1; rr(c, 60, 968, W-120, 80, 16); c.stroke();
 
-  // ——— Trio (Sol / Lua / Asc) ———
-  const sol = mapa.planetas.find((p) => p.chave === "sol");
-  const lua = mapa.planetas.find((p) => p.chave === "lua");
-  const trio = [
-    { label: "☉  Sol", val: sol.signo },
-    { label: "☽  Lua", val: lua.incerta ? "—" : lua.signo },
-    { label: "↑  Ascendente", val: mapa.ascendente ? mapa.ascendente.signo : "—" },
-  ];
-  const bW = (W - 100) / 3 - 10, bH = 220, bY = 380;
-  trio.forEach(({ label, val }, i) => {
-    const bX = 50 + i * ((W - 100) / 3);
-    c.fillStyle = CAMPO; rr(c, bX, bY, bW, bH, 22); c.fill();
-    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, bX, bY, bW, bH, 22); c.stroke();
-    const cx = bX + bW / 2;
-    c.fillStyle = SUAVE; c.font = `400 27px ${SANS}`;
-    c.fillText(label, cx, bY + 72);
-    c.fillStyle = OURO2; c.font = `600 58px ${SERIF}`;
-    c.fillText(val, cx, bY + 160);
+  const colW = (W - 120) / planRow.length;
+  planRow.forEach((p, i) => {
+    const px = 60 + i * colW + colW / 2;
+    c.fillStyle = SUAVE; c.font = `400 22px ${SANS}`;
+    c.fillText(`${glf[p.chave]}`, px, 998);
+    c.fillStyle = TEXTO; c.font = `500 30px ${SERIF}`;
+    c.fillText(p.signo.slice(0,3), px, 1030);
   });
 
-  // ——— Outros planetas ———
-  c.strokeStyle = LINHA; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(80, 640); c.lineTo(W-80, 640); c.stroke();
-
-  const pessoais = ["mercurio","venus","marte","jupiter","saturno"];
-  const glf = { mercurio:"☿", venus:"♀", marte:"♂", jupiter:"♃", saturno:"♄", urano:"♅", netuno:"♆", plutao:"♇" };
-  const planFiltro = mapa.planetas.filter(p => pessoais.includes(p.chave));
-
-  c.fillStyle = SUAVE; c.font = `500 28px ${SANS}`;
-  c.fillText("PLANETAS", W/2, 700);
-
-  const colunas = 2, larg = (W - 160) / colunas;
-  planFiltro.forEach((p, i) => {
-    const col = i % colunas, row = Math.floor(i / colunas);
-    const px = 80 + col * larg + larg / 2;
-    const py = 760 + row * 100;
-    c.fillStyle = CAMPO; rr(c, 80 + col * larg, py - 44, larg - 20, 80, 16); c.fill();
-    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, 80 + col * larg, py - 44, larg - 20, 80, 16); c.stroke();
-    c.fillStyle = SUAVE; c.font = `400 24px ${SANS}`;
-    c.fillText(`${glf[p.chave]}  ${p.nome}`, px - 10, py - 12);
-    c.fillStyle = OURO; c.font = `600 36px ${SERIF}`;
-    c.fillText(p.signo, px - 10, py + 26);
-  });
-
-  // ——— MC ———
-  if (mapa.meioDoCeu) {
-    const mcY = 760 + Math.ceil(planFiltro.length / 2) * 100 + 20;
-    c.fillStyle = CAMPO; rr(c, 80, mcY, W - 160, 80, 16); c.fill();
-    c.strokeStyle = LINHA; c.lineWidth = 1; rr(c, 80, mcY, W - 160, 80, 16); c.stroke();
-    c.fillStyle = SUAVE; c.font = `400 24px ${SANS}`;
-    c.fillText("MC  Meio do Céu", W/2, mcY + 26);
-    c.fillStyle = OURO; c.font = `600 36px ${SERIF}`;
-    c.fillText(mapa.meioDoCeu.signo, W/2, mcY + 62);
-  }
-
-  // ——— Equilíbrio ———
-  const eqY = H - 340;
-  c.strokeStyle = LINHA; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(80, eqY); c.lineTo(W-80, eqY); c.stroke();
-
+  // ── Elemento e Modalidade ──
   const doms = mapa.equilibrio.elemento.nome;
   const mods = mapa.equilibrio.modalidade.nome;
-  c.fillStyle = SUAVE; c.font = `400 30px ${SANS}`;
-  c.fillText(`Elemento · ${doms}     Modalidade · ${mods}`, W/2, eqY + 60);
-
-  // ——— Footer ———
-  c.strokeStyle = LINHA; c.lineWidth = 1;
-  c.beginPath(); c.moveTo(80, H - 200); c.lineTo(W-80, H - 200); c.stroke();
-  c.fillStyle = OURO; c.font = `500 32px ${SANS}`;
-  c.fillText("mapa-astral-1-real.vercel.app", W/2, H - 140);
   c.fillStyle = SUAVE; c.font = `400 26px ${SANS}`;
-  c.fillText("Posições pelo zodíaco tropical · Astronomy Engine", W/2, H - 90);
+  c.fillText(`${doms}  ·  ${mods}`, W/2, 1106);
+
+  // ── Divisor footer ──
+  c.strokeStyle = "rgba(255,255,255,0.07)"; c.lineWidth = 1;
+  c.beginPath(); c.moveTo(100,1140); c.lineTo(W-100,1140); c.stroke();
+
+  // ── Footer ──
+  c.fillStyle = SUAVE; c.font = `400 26px ${SANS}`;
+  const dataLinha = `${dataBR(mapa.data)}${mapa.hora ? " · " + mapa.hora : ""} · ${mapa.local}`;
+  c.fillText(dataLinha, W/2, 1192);
+  c.fillStyle = OURO; c.font = `500 28px ${SANS}`;
+  c.fillText("mapa-astral-1-real.vercel.app", W/2, 1272);
 
   return new Promise((res) => cv.toBlob(res, "image/png"));
 }
